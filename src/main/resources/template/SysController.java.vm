@@ -1,0 +1,119 @@
+package ${package}.${moduleName}.controller;
+
+import java.util.Arrays;
+import java.util.List;
+import java.util.Map;
+
+import org.apache.shiro.authz.annotation.RequiresPermissions;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.web.bind.annotation.*;
+
+import ${package}.${moduleName}.entity.${className}Entity;
+import ${package}.${moduleName}.service.${className}Service;
+import ${mainPath}.utils.PageUtils;
+import ${mainPath}.result.R;
+import  ${mainPath}.validator.ValidatorUtils;
+import ${package}.sys.controller.AbstractController;
+import ${mainPath}.common.annotation.DataFilter;
+import io.swagger.annotations.Api;
+import io.swagger.annotations.ApiImplicitParam;
+import io.swagger.annotations.ApiImplicitParams;
+import io.swagger.annotations.ApiOperation;
+import springfox.documentation.annotations.ApiIgnore;
+/**
+ * ${comments}
+ *
+ * @author ${author}
+ * @email ${email}
+ * @date ${datetime}
+ */
+@Api(tags = {"${comments}"})
+@RestController
+@RequestMapping("/${pathName}")
+public class ${className}Controller  extends AbstractController  {
+    @Autowired
+    private ${className}Service ${classname}Service;
+
+    /**
+     * 获取分页列表
+     */
+    @ApiOperation(value = "分页获取${comments}列表接口")
+    @ApiImplicitParams({
+            @ApiImplicitParam(name = "page", value = "当前页", defaultValue = "1", paramType = "query"),
+            @ApiImplicitParam(name = "limit", value = "条数", defaultValue = "20", paramType = "query")
+    })
+    @GetMapping("/page")
+    @RequiresPermissions("${moduleName}:${pathName}:list")
+    @DataFilter(user = false, subDept = true)
+    public Result<PageUtils> page(@ApiIgnore @RequestParam Map<String, Object> params){
+        PageUtils page = ${classname}Service.queryPage(params);
+        return new Result<PageUtils>().ok(page);
+    }
+
+    /**
+    * 获取所有列表
+    */
+    @ApiOperation(value = "获取${comments}所有列表接口")
+    @ApiImplicitParams({
+    })
+    @GetMapping("/list")
+    @RequiresPermissions("${moduleName}:${pathName}:list")
+    @DataFilter(user = false, subDept = true)
+    public Result<List<${className}Entity>> list(@ApiIgnore @RequestParam Map<String, Object> params) {
+        List<${className}Entity> list = ${classname}Service.queryList(params);
+        return new Result<List<${className}Entity>>().ok(list);
+    }
+
+    /**
+     * 获取某个信息详情
+     */
+    @ApiOperation(value = "${comments}-获取某个信息详情")
+    @GetMapping("/info/{${pk.attrname}}")
+    @RequiresPermissions("${moduleName}:${pathName}:info")
+    public Result<${className}Entity> info(@PathVariable("${pk.attrname}") ${pk.attrType} ${pk.attrname}){
+		${className}Entity ${classname} = ${classname}Service.getById(${pk.attrname});
+
+        return new Result<${className}Entity>().ok(${classname});
+    }
+
+    /**
+     * 新增信息
+     */
+    @ApiOperation(value = "${comments}-新增信息")
+    @PostMapping("/save")
+    @RequiresPermissions("${moduleName}:${pathName}:save")
+    public Result<Object> save(@RequestBody ${className}Entity ${classname}){
+        ValidatorUtils.validateEntity(${classname});
+
+		${classname}Service.save(${classname});
+        return new Result<>().ok();
+    }
+
+    /**
+     * 修改信息
+     */
+    @ApiOperation(value = "${comments}-修改信息")
+    @PutMapping("/update")
+    @RequiresPermissions("${moduleName}:${pathName}:update")
+    public Result<Object> update(@RequestBody ${className}Entity ${classname}){
+        ValidatorUtils.validateEntity(${classname});
+
+		${classname}Service.updateById(${classname});
+        return new Result<>().ok();
+    }
+
+    /**
+     * 删除信息
+     */
+    @ApiOperation(value =" ${comments}-删除信息")
+    @DeleteMapping("/delete")
+    @RequiresPermissions("${moduleName}:${pathName}:delete")
+    public Result<Object> delete(@RequestBody ${pk.attrType}[] ${pk.attrname}s){
+        if (${pk.attrname}s == null || ${pk.attrname}s.length == 0) {
+            return new Result<>().error("请输入要删除的记录id");
+        }
+
+		${classname}Service.removeByIds(Arrays.asList(${pk.attrname}s));
+        return new Result<>().ok();
+    }
+}

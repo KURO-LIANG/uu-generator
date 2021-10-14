@@ -1,0 +1,48 @@
+package ${package}.${moduleName}.service.impl;
+
+import org.springframework.stereotype.Service;
+import java.util.List;
+import java.util.Map;
+import com.baomidou.mybatisplus.core.conditions.query.LambdaQueryWrapper;
+import com.baomidou.mybatisplus.core.metadata.IPage;
+import com.baomidou.mybatisplus.extension.service.impl.ServiceImpl;
+import org.apache.commons.lang.StringUtils;
+import ${mainPath}.utils.PageUtils;
+import ${mainPath}.utils.Query;
+
+import ${mainPath}.constant.SysConstant;
+import ${mainPath}.dao.${className}Dao;
+import ${package}.${moduleName}.entity.${className}Entity;
+import ${mainPath}.service.${className}Service;
+
+/**
+ * ${comments}
+ *
+ * @author ${author}
+ * @email ${email}
+ * @date ${datetime}
+ */
+@Service("${classname}Service")
+public class ${className}ServiceImpl extends ServiceImpl<${className}Dao, ${className}Entity> implements ${className}Service {
+
+    @Override
+    public PageUtils queryPage(Map<String, Object> params) {
+        String sqlFilter = (String) params.get(SysConstant.SQL_FILTER);
+        IPage<${className}Entity> page = this.page(
+                new Query<${className}Entity>().getPage(params),
+                new LambdaQueryWrapper<${className}Entity>()
+                        .apply(StringUtils.isNotBlank(sqlFilter), sqlFilter)
+                        .orderByDesc(${className}Entity::get${pk.attrName})
+        );
+        return new PageUtils(page);
+    }
+
+    @Override
+    public List<${className}Entity> queryList(Map<String, Object> params) {
+        String sqlFilter = (String) params.get(SysConstant.SQL_FILTER);
+        return this.list(new LambdaQueryWrapper<${className}Entity>()
+                .apply(StringUtils.isNotBlank(sqlFilter), sqlFilter)
+                .orderByDesc(${className}Entity::get${pk.attrName})
+        );
+    }
+}

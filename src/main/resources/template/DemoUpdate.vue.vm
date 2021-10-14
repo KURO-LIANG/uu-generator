@@ -1,0 +1,124 @@
+<template>
+    <div class="page-right" v-loading="loading">
+        <page-header :title="pageTitle" back/>
+        <div class="page-body">
+            <el-form
+                ref="dataFormRef"
+                :model="dataForm"
+                :rules="dataRule"
+                size="small"
+                label-width="6em"
+            >
+                #foreach($column in $columns)
+                    #if($column.columnName != $pk.columnName)
+                        <el-form-item label="${column.comments}" prop="${column.attrname}">
+                            <el-input v-model="dataForm.${column.attrname}"
+                                      placeholder="${column.comments}"></el-input>
+                        </el-form-item>
+                    #end
+                #end
+
+                <el-form-item>
+                    <el-button
+                        :loading="saving"
+                        type="primary"
+                        @click="submitForm"
+                    >保存
+                    </el-button>
+                </el-form-item>
+            </el-form>
+        </div>
+    </div>
+</template>
+
+<script setup>
+import {ref, reactive, onMounted, getCurrentInstance} from 'vue'
+import {useRoute, useRouter} from 'vue-router'
+import request from "../../../utils/request";
+import PageHeader from "../../../components/PageHeader.vue"
+
+const route = useRoute()
+const router = useRouter()
+const {proxy} = getCurrentInstance()
+
+let saving = ref(false)
+let loading = ref(false)
+let pageTitle = ref('')
+let dataFormRef = ref(null)
+
+let dataForm = reactive({
+    #foreach($column in $columns)
+        #if($column.columnName == $pk.columnName)
+            ${column.attrname}: 0,
+        #else
+            ${column.attrname}: ''#if($velocityCount != $columns.size()),#end
+
+        #end
+    #end
+})
+
+let dataRule = reactive({
+    #foreach($column in $columns)
+        #if($column.columnName != $pk.columnName)
+            ${column.attrname}: [
+            { required: true, message: '${column.comments}不能为空', trigger: 'blur' }
+        ]#if($velocityCount != $columns.size()),#end
+
+        #end
+    #end
+})
+
+const submitForm = () => {
+    saving.value = true
+    #[[dataFormRef.value.validate(valid => {]]#
+        if (valid) {
+            request({
+                method: `${!dataForm.${pk.attrname} ? 'POST' : 'PUT'}`,
+                url: `/admin-server/${moduleName}/${pathName}/${!dataForm.${pk.attrname} ? 'save' : 'update'}`,
+                data: dataForm
+            }).then(res => {
+                saving.value = false
+                #[[proxy.$message.success('操作成功')]]#
+                #[[router.back()]]#
+            }).catch(err => {
+                saving.value = false
+                #[[proxy.$message.error(err.message)]]#
+            })
+        } else {
+            saving.value = false
+            return false
+        }
+    })
+}
+
+const getData = id => {
+    loading.value = true
+    #[[request({]]#
+        method: 'GET',
+        url: `/admin-server/${moduleName}/${pathName}/info/${id}`
+    }).then(res => {
+        loading.value = false
+        #foreach($column in $columns)
+            #if($column.columnName != $pk.columnName)
+            dataForm.${column.attrname} = res.data.${column.attrname}
+            #end
+        #end
+    }).catch(err => {
+        loading.value = false
+        #[[proxy.$message.error(err.message)]]#
+    })
+}
+
+onMounted(() => {
+    if (route.query.id) {
+        pageTitle.value = '修改'
+        getData(route.query.id)
+    } else {
+        pageTitle.value = '新增'
+    }
+})
+</script>
+
+<style scoped>
+
+</style>
