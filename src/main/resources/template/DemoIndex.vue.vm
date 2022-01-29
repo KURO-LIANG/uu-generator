@@ -75,7 +75,7 @@
                     :current-page="data.pageIndex"
                     :page-sizes="[10, 20, 50, 100]"
                     :page-size="data.pageSize"
-                    :total="data.totalPage"
+                    :total="data.totalCount"
                     layout="total, sizes, prev, pager, next, jumper">
                 </el-pagination>
             </div>
@@ -99,6 +99,7 @@ const data = reactive({
     pageIndex: 1,
     pageSize: 10,
     totalPage: 0,
+    totalCount: 0,
     dataList: [],
     dataListSelections: []
 })
@@ -116,7 +117,7 @@ const getDataList = () => {
     data.dataListLoading = true
     #[[proxy.$axios({]]#
         method: 'GET',
-        url: '/admin-server/${pathName}/page',
+        url: '/${pathName}/page',
         params: {
             'page': data.pageIndex,
             'limit': data.pageSize,
@@ -126,9 +127,11 @@ const getDataList = () => {
         data.dataListLoading = false
         data.dataList = res.data.list
         data.totalPage = res.data.totalPage
+        data.totalCount = res.data.totalCount
     }).catch(err => {
         data.dataList = []
         data.totalPage = 0
+        data.totalCount = 0
         data.dataListLoading = false
         #[[proxy.$message.error(err.message)]]#
     })
@@ -164,7 +167,7 @@ const deleteHandle = id => {
     }).then(() => {
         #[[proxy.$axios({]]#
             method: 'DELETE',
-            url: '/admin-server/${moduleName}/${pathName}/delete',
+            url: '/${moduleName}/${pathName}/delete',
             data: ids,
             json: false
         }).then(() => {

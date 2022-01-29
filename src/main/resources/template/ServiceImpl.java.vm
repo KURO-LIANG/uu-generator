@@ -11,9 +11,9 @@ import ${mainPath}.utils.PageUtils;
 import ${mainPath}.utils.Query;
 
 import ${mainPath}.constant.SysConstant;
-import ${mainPath}.dao.${className}Dao;
+import ${package}.${moduleName}.dao.${className}Dao;
 import ${package}.${moduleName}.entity.${className}Entity;
-import ${mainPath}.service.${className}Service;
+import ${package}.${moduleName}.service.${className}Service;
 
 /**
  * ${comments}

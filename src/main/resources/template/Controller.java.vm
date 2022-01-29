@@ -6,11 +6,12 @@ import java.util.Map;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.*;
+import ${package}.sys.controller.AbstractController;
 
 import ${package}.${moduleName}.entity.${className}Entity;
-import ${mainPath}.service.${className}Service;
+import ${package}.${moduleName}.service.${className}Service;
 import ${mainPath}.utils.PageUtils;
-import ${mainPath}.result.R;
+import ${mainPath}.result.Result;
 import  ${mainPath}.validator.ValidatorUtils;
 
 /**
@@ -23,7 +24,7 @@ import  ${mainPath}.validator.ValidatorUtils;
 @Api(tags = {"${comments}"})
 @RestController
 @RequestMapping("/${moduleName}/${pathName}")
-public class ${className}Controller{
+public class ${className}Controller extends AbstractController {
     @Autowired
     private ${className}Service ${classname}Service;
 
