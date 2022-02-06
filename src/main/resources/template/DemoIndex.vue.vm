@@ -167,7 +167,7 @@ const deleteHandle = id => {
     }).then(() => {
         #[[proxy.$axios({]]#
             method: 'DELETE',
-            url: '/${moduleName}/${pathName}/delete',
+            url: '/${pathName}/delete',
             data: ids,
             json: false
         }).then(() => {

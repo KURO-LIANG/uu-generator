@@ -74,7 +74,7 @@ const submitForm = () => {
         if (valid) {
             request({
                 method: `${!dataForm.${pk.attrname} ? 'POST' : 'PUT'}`,
-                url: `/${moduleName}/${pathName}/${!dataForm.${pk.attrname} ? 'save' : 'update'}`,
+                url: `/${pathName}/${!dataForm.${pk.attrname} ? 'save' : 'update'}`,
                 data: dataForm
             }).then(res => {
                 saving.value = false
@@ -95,7 +95,7 @@ const getData = id => {
     loading.value = true
     #[[request({]]#
         method: 'GET',
-        url: `/${moduleName}/${pathName}/info/${id}`
+        url: `/${pathName}/info/${id}`
     }).then(res => {
         loading.value = false
         #foreach($column in $columns)
@@ -112,6 +112,7 @@ const getData = id => {
 onMounted(() => {
     if (route.query.id) {
         pageTitle.value = '修改'
+        dataForm.${pk.attrname} = route.query.id
         getData(route.query.id)
     } else {
         pageTitle.value = '新增'

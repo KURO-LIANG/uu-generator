@@ -106,7 +106,7 @@ public class GenUtils {
 		Velocity.init(prop);
 
 		String mainPath = config.getString("mainPath" );
-		mainPath = StringUtils.isBlank(mainPath) ? "com.slowcom" : mainPath;
+		mainPath = StringUtils.isBlank(mainPath) ? "com.uu" : mainPath;
 
 		//封装模板数据
 		Map<String, Object> map = new HashMap<>();
@@ -116,6 +116,7 @@ public class GenUtils {
 		map.put("className", tableEntity.getClassName());
 		map.put("classname", tableEntity.getClassname());
 		map.put("pathName", tableEntity.getClassname().toLowerCase());
+		map.put("menuPath", tableEntity.getClassname().substring(0,1).toLowerCase() + tableEntity.getClassname().substring(1));
 		map.put("columns", tableEntity.getColumns());
 		map.put("hasBigDecimal", hasBigDecimal);
 		map.put("mainPath", mainPath);
